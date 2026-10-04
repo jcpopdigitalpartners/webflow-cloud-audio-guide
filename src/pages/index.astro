@@ -1,0 +1,159 @@
+---
+import { scenes } from '../data/chapters';
+import waveform from '../data/waveform.json';
+import '../styles/global.css';
+const fmt = (t:number) => `${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
+const groups = [...new Set(scenes.map(s => s.group))];
+---
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="description" content="A narrated Webflow Cloud field guide. Explore hosting decisions, environments, and the visitor journey with synchronized audio and research links."/><title>Webflow Cloud · The narrated field guide</title><link rel="icon" href="/favicon.svg"/></head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="app">
+<header class="topbar"><a href="#" class="brand" aria-label="Webflow Cloud field guide home"><span class="brand-mark">w.</span><span>THE FIELD GUIDE</span></a><div class="top-title">WEBFLOW CLOUD <span>/</span> PRACTICAL WALKTHROUGH</div><span class="edition">AUDIO EDITION <b>04:12</b></span></header>
+<div class="workspace">
+<aside class="toc-panel" aria-label="Audio table of contents">
+<div class="toc-heading"><span class="eyebrow">YOUR ROUTE</span><span id="count">01 / 15</span></div><h2>Listen. Explore.<br/>Make it click.</h2>
+<nav aria-label="Narration chapters" class="toc">
+{groups.map(group => <div class="toc-group"><h3>{group}</h3>{scenes.map((s,i)=>s.group === group && <button class:list={['toc-item',{active:i===0}]} data-seek={s.start} data-index={i} aria-current={i===0?'step':undefined}><span class="toc-indicator"></span><span>{s.label}</span><time>{fmt(s.start)}</time></button>)}</div>)}
+</nav><div class="toc-note">Choose any topic to jump to its narration.</div>
+</aside>
+<main id="main" tabindex="-1">
+<div class="scene-top"><span id="chapter-label" class="eyebrow">01 / CHOOSE THE RIGHT FIT</span><label class="follow"><input type="checkbox" id="follow" checked/><span>Follow narration</span></label></div>
+<div class="scene-container">
+{scenes.map((s,i) => <article class="scene" data-scene={i} hidden={i!==0} aria-labelledby={`heading-${i}`}><div class="scene-copy"><div class="scene-number">{String(i+1).padStart(2,'0')}<span> / FIELD NOTES</span></div><h1 id={`heading-${i}`}>{s.title}</h1><p class="lead">{s.text}</p></div>
+<div class:list={['visual',s.kind]}>
+{s.kind==='fit' && <div class="fit-visual"><div class="domain-bar"><span class="small-dot"></span>your-site.com</div><div class="site-split"><div class="site-part"><span class="visual-tag">WEBFLOW SITE</span><strong>The story</strong><p>Pages · CMS · Campaigns</p><span class="pill">Built in Designer</span></div><div class="app-part"><span class="visual-tag">CLOUD APP</span><strong>The interaction</strong><p>Tools · Portals · Experiences</p><span class="pill">Built in your IDE</span></div></div><div class="visual-bottom">A connected experience on your site</div></div>}
+{s.kind==='criteria' && <div class="criteria-grid">{[['Team workflow','Your site already lives in Webflow'],['Supported stack','Framework + runtime compatibility'],['Operational fit','Traffic, limits, and runtime needs'],['Launch simplicity','A shared site and app workflow']].map(([a,b],i)=><div><span class="accent-number">0{i+1}</span><h2>{a}</h2><p>{b}</p></div>)}</div>}
+{s.kind==='storage' && <div><div class="runtime-banner"><span class="visual-tag">FRAMEWORK APP RUNTIME</span><h2>Cloudflare Workers</h2><p>Choose storage to match your data</p></div><div class="storage-grid">{[['D1','SQLite','Relational, structured data'],['KV','Key-value','Small values and configuration'],['R2','Object storage','Files, media, and uploads']].map(([a,b,c])=><div><strong>{a}</strong><h3>{b}</h3><p>{c}</p></div>)}</div></div>}
+{s.kind==='alternatives' && <div class="comparison"><div><span class="visual-tag">INFRASTRUCTURE CONTROL</span><h2>AWS · Google Cloud · Azure</h2><p>Investigate custom networking, server workloads, and infrastructure requirements.</p></div><div><span class="visual-tag">APP DEPLOYMENT WORKFLOW</span><h2>Vercel · Netlify · Cloudflare</h2><p>Compare build workflows and runtime support against your application’s stack.</p></div><p class="comparison-note">Treat each as a candidate. Verify its specific capabilities.</p></div>}
+{s.kind==='research' && <div class="research-grid">{[['Frameworks','Runtime & dependencies','environment'],['Limits','Traffic, CPU & storage','limits'],['Pricing','Current plan & usage','https://webflow.com/pricing'],['Deployments','Branches, builds & releases','deployments']].map(([a,b,c])=><a href={c.startsWith('https')?c:'https://developers.webflow.com/webflow-cloud/'+c} target="_blank" rel="noopener noreferrer" data-resource><span class="visual-tag">CHECK THE DOCS</span><h2>{a}</h2><p>{b}</p><span class="resource-action">Open resource ↗</span></a>)}</div>}
+{s.kind==='source' && <div class="source-layout"><div class="source-box"><span class="visual-tag">SOURCE</span><h2>GitHub repository</h2><code>calculator-app / main</code><p>Versioned application code</p></div><div class="connector">BUILD + HOST</div><div class="source-box highlighted"><span class="visual-tag">PROJECT</span><h2>Webflow Cloud app</h2><code>calculator</code><p>The application Cloud deploys</p></div></div>}
+{s.kind==='environments' && <div class="env-grid"><div><span class="visual-tag">TEST</span><h2>Preview environment</h2><code>branch: develop</code><p>Review changes before release</p></div><div class="highlighted"><span class="visual-tag">VISITORS</span><h2>Production environment</h2><code>branch: main</code><p>The version your visitors use</p></div><p class="env-note">Illustrative branch names. Choose yours in the environment settings.</p></div>}
+{s.kind==='routes' && <div class="route-visual"><div class="url"><span>your-site.com</span><strong>/calculator</strong></div><div class="route-row"><code>/</code><span>Webflow homepage</span></div><div class="route-row selected"><code>/calculator</code><span>Webflow Cloud app</span></div><div class="route-warning"><b>Reserve this path</b><span>A conflicting Webflow page does not take precedence.</span></div></div>}
+{s.kind==='release' && <div class="release-visual"><span class="visual-tag">BEFORE YOU OPEN THE APP</span><div class="release-step"><span>01</span><h2>Confirm the commit</h2><p>The intended source revision</p></div><div class="release-step"><span>02</span><h2>Check the deployment</h2><p>Build status and logs</p></div><div class="release-step"><span>03</span><h2>Open the live route</h2><p>Verify the app actually works</p></div></div>}
+{s.kind==='deploy' && <div class="deploy-visual"><div class="terminal"><span>calculator-app / main</span><code><b>$</b> git push origin main</code></div><div class="deploy-steps">{[['01','Push','Connected branch'],['02','Build','Compile the app'],['03','Deploy','Update environment']].map(([n,a,b])=><div><span>{n}</span><h2>{a}</h2><p>{b}</p></div>)}</div><p class="visual-bottom">A push to the connected branch starts the normal deployment workflow.</p></div>}
+{s.kind==='visitor' && <div class="visitor-visual"><div class="domain-bar">GET your-site.com/</div><div class="visitor-home"><span class="visual-tag">WEBFLOW LANDING PAGE</span><h2>Your site introduces.<br/>Your app makes it useful.</h2><button data-seek={scenes[i+1].start} class="example-link">Explore the calculator</button><small>Jump to the app request in the narration</small></div></div>}
+{s.kind==='request' && <div class="request-visual"><div class="request-endpoint"><span class="visual-tag">BROWSER REQUEST</span><code>GET /calculator</code></div><div class="request-center">WEBFLOW CLOUD APP</div><div class="request-endpoint response"><span class="visual-tag">RESPONSE</span><code>&lt;html&gt;…&lt;/html&gt;</code><p>The initial page structure</p></div></div>}
+{s.kind==='assets' && <div class="assets-visual"><div class="asset-parts"><span>HTML <small>Structure</small></span><b>+</b><span>JavaScript <small>Behavior</small></span><b>+</b><span>CSS <small>Presentation</small></span></div><div class="calculator"><div><span class="visual-tag">ILLUSTRATIVE APP</span><h2>Seat calculator</h2><p>$20 per seat / month</p></div><label>Seats <input id="seats" type="number" value="5" min="1" max="1000" step="1" aria-describedby="calc-error"/></label><output id="total">$100<span>/ month</span></output><p id="calc-error" role="status"></p></div></div>}
+{s.kind==='summary' && <div class="summary-grid">{[['GitHub','Holds the source','Version + collaborate'],['Webflow Cloud','Runs the app','Build + deploy'],['The browser','Creates the experience','Request + render']].map(([a,b,c])=><div><span class="visual-tag">{a}</span><h2>{b}</h2><p>{c}</p></div>)}</div>}
+</div><details class="notes"><summary>Keep in mind</summary><p>{s.question}</p></details></article>)}
+</div>
+<div class="scene-nav"><button id="prev" class="text-button" disabled>Previous topic</button><span id="scene-time">0:00</span><button id="next" class="text-button">Next topic</button></div>
+</main>
+<aside class="resource-panel" aria-label="Resources for the current narration">
+<span class="eyebrow">GO A LITTLE DEEPER</span><div class="resource-symbol" aria-hidden="true">↗</div><h2>Good questions.<br/>Better decisions.</h2><p class="resource-caption">A resource for this moment</p><a id="resource-link" href={scenes[0].url} target="_blank" rel="noopener noreferrer"><span id="resource-title">{scenes[0].resource}</span><span class="resource-domain">developers.webflow.com</span><span class="resource-action">Open resource ↗</span></a><div class="research-prompt"><span class="eyebrow">RESEARCH PROMPT</span><p id="research-question">{scenes[0].question}</p><button id="pause-research">Pause to research</button></div><p class="source-note">Official documentation links<br/>Selected October 4, 2026</p>
+</aside>
+</div>
+<footer class="player" aria-label="Audio narration controls"><audio id="audio" src="/narration.mp3" preload="metadata"></audio><button id="play" class="play" aria-label="Play narration"><svg id="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></button><div class="now-playing"><div class="audio-activity"><span class="level-meter" id="level-meter" aria-hidden="true">{Array.from({length:8},()=> <i></i>)}</span><span class="eyebrow" id="play-state">READY WHEN YOU ARE</span></div><strong id="now-topic">Where Cloud fits</strong></div><button id="back" class="skip-button" aria-label="Rewind 10 seconds">−10</button><div class="seek-wrap"><div class="time-labels"><span id="current">0:00</span><span id="duration">4:12</span></div><div class="waveform" id="waveform" style="--progress:0%;--chapter-start:0%;--chapter-width:7%">
+<div class="waveform-chapter" aria-hidden="true"></div>
+<svg class="waveform-base" viewBox="0 0 960 44" preserveAspectRatio="none" aria-hidden="true">{waveform.map((p,i)=><rect x={i*3} y={22-p*20} width="1.8" height={p*40} rx=".9"/>)}</svg>
+<div class="waveform-played" aria-hidden="true"><svg viewBox="0 0 960 44" preserveAspectRatio="none">{waveform.map((p,i)=><rect x={i*3} y={22-p*20} width="1.8" height={p*40} rx=".9"/>)}</svg></div>
+<div class="waveform-playhead" aria-hidden="true"></div>
+<input id="seek" aria-label="Seek narration waveform" type="range" min="0" max="252.604" value="0" step="0.1"/>
+<div class="waveform-tooltip" id="waveform-tooltip" aria-hidden="true"></div>
+</div><div class="chapter-ticks" aria-hidden="true">{scenes.map(s=><span style={`left:${s.start/252.604*100}%`}></span>)}</div></div><button id="forward" class="skip-button" aria-label="Forward 10 seconds">+10</button><label class="speed"><span class="sr-only">Playback speed</span><select id="speed"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label><label class="volume"><span class="sr-only">Volume</span><span aria-hidden="true">VOL</span><input id="volume" aria-label="Volume" type="range" min="0" max="1" value="1" step="0.05"/></label><div id="audio-status" class="sr-only" role="status"></div></footer>
+</div>
+<script define:vars={{ scenes }}>
+const $ = id => document.getElementById(id);
+const audio=$('audio'), seek=$('seek');
+let displayed=0, active=0, pendingSeek=null;
+const format=t=>`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`;
+// Media engines may round a seek a few milliseconds below a cue.
+const indexAt=t=>Math.max(0,scenes.findLastIndex(s=>s.start<=t+0.025));
+function render(i){displayed=i;document.querySelectorAll('[data-scene]').forEach(el=>el.hidden=Number(el.dataset.scene)!==i);$('chapter-label').textContent=scenes[i].group;$('scene-time').textContent=format(scenes[i].start);$('prev').disabled=i===0;$('next').disabled=i===scenes.length-1;document.querySelector('.scene-container').scrollTop=0;}
+function resource(i,t){let s=scenes[i];if(i===1 && t>=37.68)s={...s,resource:'Platform limits',url:'https://developers.webflow.com/webflow-cloud/limits'};if(i===4 && t>=112.22)s={...s,resource:'Current plans & pricing',url:'https://webflow.com/pricing'};$('resource-title').textContent=s.resource;$('resource-link').href=s.url;$('resource-link').querySelector('.resource-domain').textContent=new URL(s.url).hostname;$('research-question').textContent=s.question;}
+function update(){
+  // Keep all visible state on the requested position while a seek is pending.
+  // Older timeupdate events must not restore the previous scene.
+  if(pendingSeek!==null && audio.readyState>0 && !audio.seeking && Math.abs(audio.currentTime-pendingSeek)<0.06) pendingSeek=null;
+  const t=pendingSeek??audio.currentTime,i=indexAt(t);
+  active=i;seek.value=String(t);
+  seek.style.setProperty('--progress',`${100*t/(audio.duration||252.604)}%`);
+  const duration=audio.duration||252.604;
+  $('waveform').style.setProperty('--progress',`${100*t/duration}%`);
+  $('waveform').style.setProperty('--chapter-start',`${100*scenes[i].start/duration}%`);
+  $('waveform').style.setProperty('--chapter-width',`${100*((scenes[i+1]?.start??duration)-scenes[i].start)/duration}%`);
+  seek.setAttribute('aria-valuetext',`${format(t)} of ${format(duration)} — ${scenes[i].label}`);
+  $('current').textContent=format(t);
+  $('count').textContent=`${String(i+1).padStart(2,'0')} / ${scenes.length}`;
+  $('now-topic').textContent=scenes[i].label;
+  document.querySelectorAll('.toc-item').forEach(el=>{
+    const yes=Number(el.dataset.index)===i;
+    el.classList.toggle('active',yes);
+    if(yes)el.setAttribute('aria-current','step');else el.removeAttribute('aria-current');
+  });
+  resource(i,t);
+  if(($('follow').checked||pendingSeek!==null)&&displayed!==i)render(i);
+}
+function jump(t){
+  const duration=Number.isFinite(audio.duration)?audio.duration:252.604;
+  const target=Math.max(0,Math.min(t,duration));
+  pendingSeek=target;
+  // Any explicit navigation resumes the synchronized view.
+  $('follow').checked=true;
+  update();
+  if(audio.readyState===0){
+    if(audio.networkState!==2)audio.load();
+  }else{
+    audio.currentTime=target;
+    update();
+  }
+}
+async function toggle(){if(audio.paused){if(audio.ended)jump(0);try{prepareAnalyser().then(()=>{if(!audio.paused&&analyser){resetMeter();animateMeter();}});await audio.play();}catch{ $('audio-status').textContent='Playback could not start. Press play to try again.';$('play-state').textContent='PRESS PLAY TO RETRY';}}else audio.pause();}
+function state(){const playing=!audio.paused;$('play').setAttribute('aria-label',playing?'Pause narration':'Play narration');$('play-icon').innerHTML=playing?'<path d="M6 5h4v14H6zm8 0h4v14h-4z" fill="currentColor"/>':'<path d="M8 5v14l11-7z" fill="currentColor"/>';$('play-state').textContent=audio.ended?'WALKTHROUGH COMPLETE':playing?'NOW PLAYING':'PAUSED';document.body.classList.toggle('playing',playing);}
+document.querySelectorAll('[data-seek]').forEach(b=>b.addEventListener('click',()=>jump(Number(b.dataset.seek))));$('play').addEventListener('click',toggle);$('prev').addEventListener('click',()=>jump(scenes[Math.max(0,displayed-1)].start));$('next').addEventListener('click',()=>jump(scenes[Math.min(scenes.length-1,displayed+1)].start));$('back').addEventListener('click',()=>jump((pendingSeek??audio.currentTime)-10));$('forward').addEventListener('click',()=>jump((pendingSeek??audio.currentTime)+10));seek.addEventListener('input',()=>jump(Number(seek.value)));$('speed').addEventListener('change',e=>audio.playbackRate=Number(e.target.value));$('volume').addEventListener('input',e=>audio.volume=Number(e.target.value));$('follow').addEventListener('change',()=>{if($('follow').checked)render(active);});
+audio.addEventListener('loadedmetadata',()=>{seek.max=String(audio.duration);$('duration').textContent=format(audio.duration);if(pendingSeek!==null)audio.currentTime=pendingSeek;update();});audio.addEventListener('timeupdate',update);audio.addEventListener('seeked',update);['play','pause','ended'].forEach(e=>audio.addEventListener(e,state));audio.addEventListener('waiting',()=>{$('play-state').textContent='BUFFERING';});audio.addEventListener('playing',state);audio.addEventListener('error',()=>{$('play-state').textContent='AUDIO UNAVAILABLE';$('audio-status').textContent='Audio failed to load. Please reload the page.';});
+$('pause-research').addEventListener('click',()=>audio.pause());document.querySelectorAll('[data-resource],#resource-link').forEach(a=>a.addEventListener('click',()=>audio.pause()));
+$('seats').addEventListener('input',e=>{const n=Number(e.target.value),valid=e.target.value!==''&&Number.isInteger(n)&&n>=1&&n<=1000;e.target.setAttribute('aria-invalid',String(!valid));$('calc-error').textContent=valid?'':'Enter a whole number from 1 to 1,000.';$('total').innerHTML=valid?`$${(n*20).toLocaleString()}<span>/ month</span>`:'—';});
+document.addEventListener('keydown',e=>{if(/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(e.target.tagName))return;if(e.code==='Space'){e.preventDefault();toggle();}if(e.code==='ArrowLeft'){e.preventDefault();jump((pendingSeek??audio.currentTime)-10);}if(e.code==='ArrowRight'){e.preventDefault();jump((pendingSeek??audio.currentTime)+10);}});
+// A single analyser observes the existing player; it never creates another track.
+let audioContext=null,analyser=null,frequencyData=null,meterFrame=null;
+const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)');
+const meterBars=[...$('level-meter').children];
+async function prepareAnalyser(){
+  const AudioContext=window.AudioContext||window.webkitAudioContext;
+  if(!AudioContext||reducedMotion?.matches)return;
+  try{
+    if(!audioContext)audioContext=new AudioContext();
+    if(audioContext.state!=='running')await audioContext.resume();
+    if(!analyser && audioContext.state==='running'){
+      const source=audioContext.createMediaElementSource(audio);
+      source.connect(audioContext.destination);
+      analyser=audioContext.createAnalyser();
+      analyser.fftSize=256;analyser.smoothingTimeConstant=.75;
+      source.connect(analyser);
+      frequencyData=new Uint8Array(analyser.frequencyBinCount);
+    }
+  }catch{ /* Waveform navigation and normal audio remain available. */ }
+}
+function resetMeter(){
+  if(meterFrame!==null)cancelAnimationFrame(meterFrame);
+  meterFrame=null;meterBars.forEach(b=>b.style.setProperty('--level','.13'));
+}
+function animateMeter(){
+  if(audio.paused||audio.ended||!analyser||reducedMotion?.matches){resetMeter();return;}
+  analyser.getByteFrequencyData(frequencyData);
+  meterBars.forEach((bar,i)=>{
+    const first=1+i*2,last=Math.min(first+3,frequencyData.length);
+    let energy=0;for(let n=first;n<last;n++)energy+=frequencyData[n];
+    bar.style.setProperty('--level',String(Math.max(.13,energy/((last-first)*255))));
+  });
+  meterFrame=requestAnimationFrame(animateMeter);
+}
+audio.addEventListener('playing',()=>{resetMeter();if(analyser)animateMeter();});
+audio.addEventListener('pause',resetMeter);audio.addEventListener('ended',resetMeter);audio.addEventListener('waiting',resetMeter);
+reducedMotion?.addEventListener?.('change',()=>{resetMeter();if(!reducedMotion.matches&&!audio.paused&&analyser)animateMeter();});
+document.addEventListener('visibilitychange',()=>{resetMeter();if(!document.hidden&&!audio.paused&&analyser)animateMeter();});
+seek.addEventListener('pointermove',event=>{
+  const rect=$('waveform').getBoundingClientRect();
+  const ratio=Math.max(0,Math.min(1,(event.clientX-rect.left)/Math.max(1,rect.width)));
+  const time=ratio*(audio.duration||252.604);
+  const tooltip=$('waveform-tooltip');
+  tooltip.textContent=`${format(time)} · ${scenes[indexAt(time)].label}`;
+  tooltip.style.left=`${Math.max(12,Math.min(88,ratio*100))}%`;
+});
+window.addEventListener('hashchange',()=>{if(!location.hash)jump(0);});
+</script>
+</body></html>
